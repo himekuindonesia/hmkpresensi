@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presensi Karyawan Hebat Himeku Space</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-button.active {
+            border-bottom-color: #4f46e5; /* indigo-600 */
+            color: #4f46e5;
+        }
+        /* Menyembunyikan radio button asli */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md mx-auto">
+        <!-- ===== HALAMAN LOGIN ===== -->
+        <div id="login-page" class="bg-white p-8 rounded-lg shadow-lg w-full transition-opacity duration-500">
+            <div class="text-center mb-8">
+                <!-- Logo Perusahaan -->
+                <a href="#" class="inline-block mb-4" onclick="return false;">
+                    <img src="https://lh3.googleusercontent.com/pw/AP1GczMWgo6E-88vc6Emac8W4aDh_YfyBGjS9D3raVPKlBZjR9ZS3q9vCRcac9R6bepLbcdZvXgIhOuoYmiLKIBKC80HLmT91lRllW-_nwOu-Lcpx4OI5A0=w2400" alt="Logo Perusahaan" class="w-24 h-24 mx-auto rounded-full object-cover shadow-md"/>
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 mt-2">Presensi Karyawan Hebat Himeku Space</h1>
+                <p class="text-slate-500">Silakan masuk untuk melanjutkan</p>
+            </div>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="username" class="block text-sm font-medium text-slate-600 mb-2">Username</label>
+                    <div class="relative">
+                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fas fa-user text-slate-400"></i>
+                        </span>
+                        <input type="text" id="username" name="username" class="w-full pl-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="contoh: umicantik" required value="">
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-slate-600 mb-2">Password</label>
+                     <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i class="fas fa-lock text-slate-400"></i>
+                        </span>
+                        <input type="password" id="password" name="password" class="w-full pl-10 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="********" required value="">
+                        <span id="toggle-password" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
+                            <i class="fas fa-eye text-slate-400"></i>
+                        </span>
+                    </div>
+                </div>
+                 <p id="login-error" class="text-red-500 text-sm text-center mb-4 hidden">Username atau password salah.</p>
+                <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out transform hover:-translate-y-1">
+                    Masuk
+                </button>
+            </form>
+        </div>
+
+        <!-- ===== HALAMAN APLIKASI UTAMA ===== -->
+        <div id="app-page" class="bg-white p-6 rounded-lg shadow-lg w-full hidden opacity-0 transition-opacity duration-500">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-200">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Selamat Datang,</h2>
+                    <p id="user-display" class="text-indigo-600 font-semibold"></p>
+                </div>
+                <button id="logout-button" class="text-slate-500 hover:text-red-600 transition">
+                    <i class="fas fa-sign-out-alt text-2xl"></i>
+                </button>
+            </div>
+
+            <!-- Navigasi Tab -->
+            <div class="mb-6 border-b border-slate-200">
+                <nav class="flex -mb-px space-x-6">
+                    <button class="tab-button py-3 px-1 border-b-2 font-semibold text-indigo-600 border-indigo-600" data-tab="presensi">
+                        <i class="fas fa-camera mr-2"></i>Presensi
+                    </button>
+                    <button class="tab-button py-3 px-1 border-b-2 font-semibold text-slate-500 border-transparent hover:text-indigo-600" data-tab="riwayat">
+                        <i class="fas fa-history mr-2"></i>Riwayat
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Konten Tab -->
+            <div>
+                <!-- Tab Presensi -->
+                <div id="presensi-tab" class="tab-content">
+                     <!-- Waktu & Tanggal Real-time -->
+                    <div id="live-time" class="text-center mb-6 p-3 bg-slate-50 rounded-lg">
+                        <p id="current-date" class="font-semibold text-slate-700"></p>
+                        <p id="current-time" class="text-2xl font-bold text-indigo-600"></p>
+                    </div>
+                    <form id="presensi-form">
+                        <div class="space-y-6">
+                            <!-- Pilihan Status -->
+                             <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Status Hari Ini</label>
+                                <div class="flex gap-4">
+                                    <label class="flex items-center justify-center gap-2 p-3 border border-slate-300 rounded-lg flex-1 cursor-pointer has-[:checked]:bg-indigo-50 has-[:checked]:border-indigo-500 has-[:checked]:text-indigo-600 transition">
+                                        <input type="radio" name="status" value="Masuk" class="sr-only" checked>
+                                        <i class="fas fa-sign-in-alt"></i>
+                                        <span class="font-medium">Masuk</span>
+                                    </label>
+                                    <label class="flex items-center justify-center gap-2 p-3 border border-slate-300 rounded-lg flex-1 cursor-pointer has-[:checked]:bg-indigo-50 has-[:checked]:border-indigo-500 has-[:checked]:text-indigo-600 transition">
+                                        <input type="radio" name="status" value="Pulang" class="sr-only">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        <span class="font-medium">Pulang</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Pilihan Shift -->
+                            <div>
+                                <label for="shift" class="block text-sm font-medium text-slate-600 mb-2">Pilih Shift</label>
+                                <select id="shift" name="shift" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                    <option value="Pagi">Pagi (09:00 - 17:00)</option>
+                                    <option value="Sore">Sore (13:00 - 21:00)</option>
+                                </select>
+                            </div>
+
+                            <!-- Upload Foto -->
+                            <div id="selfie-container" class="mb-6">
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Upload Foto Selfie</label>
+                                <label for="selfie" class="file-input-label flex flex-col items-center justify-center w-full h-32 px-4 text-center bg-white border-2 border-slate-300 border-dashed rounded-lg cursor-pointer hover:bg-slate-50">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <i class="fas fa-cloud-upload-alt text-3xl text-slate-400"></i>
+                                        <p id="file-name" class="mb-2 text-sm text-slate-500 mt-2">PNG, JPG (MAX. 5MB)</p>
+                                    </div>
+                                    <input id="selfie" type="file" class="hidden" accept="image/png, image/jpeg" required>
+                                </label>
+                            </div>
+
+                            <!-- Tombol Submit -->
+                            <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out transform hover:-translate-y-1">
+                                Kirim Absensi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tab Riwayat -->
+                <div id="riwayat-tab" class="tab-content hidden">
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Riwayat & Rekap Presensi</h3>
+                    
+                    <!-- Kontainer Rekap -->
+                    <div id="recap-container" class="mb-6 p-4 bg-indigo-50 rounded-lg">
+                        <!-- Rekap akan di-generate oleh JS -->
+                    </div>
+
+                    <div class="overflow-x-auto">
+                       <div id="history-container" class="space-y-4">
+                            <!-- Data riwayat akan dimasukkan di sini oleh JS -->
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Konfirmasi -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center transform transition-all opacity-0 -translate-y-4">
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Konfirmasi Absensi</h3>
+            <p class="text-slate-500 mb-6">Apakah Anda yakin sudah cantik/ganteng hari ini?</p>
+            <div class="flex justify-center gap-4">
+                <button id="cancel-button" class="px-6 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition">Batal</button>
+                <button id="confirm-button" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Tentu Saja!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifikasi Sukses/Gagal -->
+    <div id="notification" class="fixed top-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+        <!-- Pesan notifikasi akan muncul di sini -->
+    </div>
+
+    <!-- Animasi Loading -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center p-4 z-[60] hidden">
+        <div class="text-white text-center">
+            <i class="fas fa-spinner fa-spin text-5xl"></i>
+            <p class="mt-4 text-lg font-semibold">Mengirim data presensi...</p>
+            <p class="text-sm">Mohon tunggu sebentar, foto sedang diunggah.</p>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // ===== KONFIGURASI PENTING =====
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwNfV5qLnSXtjTHvMfMPr2IBRcCbHHXavkX0FYkT4KIqnkdlU3nYyRIKE9Wf8YCWfw/exec";
+
+        // ===== ELEMEN DOM =====
+        const loginPage = document.getElementById('login-page');
+        const appPage = document.getElementById('app-page');
+        const loginForm = document.getElementById('login-form');
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('toggle-password');
+        const loginError = document.getElementById('login-error');
+        const logoutButton = document.getElementById('logout-button');
+        const userDisplay = document.getElementById('user-display');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const presensiForm = document.getElementById('presensi-form');
+        const statusRadios = document.querySelectorAll('input[name="status"]');
+        const selfieContainer = document.getElementById('selfie-container');
+        const selfieInput = document.getElementById('selfie');
+        const fileNameDisplay = document.getElementById('file-name');
+        const historyContainer = document.getElementById('history-container');
+        const recapContainer = document.getElementById('recap-container');
+        const modal = document.getElementById('confirmation-modal');
+        const modalContent = modal.querySelector('div');
+        const cancelButton = document.getElementById('cancel-button');
+        const confirmButton = document.getElementById('confirm-button');
+        const notification = document.getElementById('notification');
+        const currentDateEl = document.getElementById('current-date');
+        const currentTimeEl = document.getElementById('current-time');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        // ===== STATE APLIKASI =====
+        let currentUser = null;
+        let presensiData = {}; 
+        let validUsers = {};
+        
+        // ===== FUNGSI-FUNGSI =====
+        
+        const updateTime = () => {
+            const now = new Date();
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            currentDateEl.textContent = now.toLocaleDateString('id-ID', optionsDate);
+            currentTimeEl.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
+        };
+
+        const fetchUsers = async () => {
+          try {
+            const userUrl = `${SCRIPT_URL}?action=getUsers&t=${new Date().getTime()}`;
+            const response = await fetch(userUrl, { redirect: "follow" });
+            if (!response.ok) {
+                throw new Error(`Gagal memuat data: Status ${response.status}`);
+            }
+            validUsers = await response.json();
+            if (validUsers.status === 'error') {
+                throw new Error(`Error dari server: ${validUsers.message}`);
+            }
+            console.log("Daftar user berhasil dimuat.");
+          } catch(error) {
+            console.error("Gagal memuat daftar user:", error);
+            loginPage.innerHTML = `
+                <div class="text-center p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-500"></i>
+                    <h2 class="text-xl font-bold text-red-700 mt-2">Gagal Terhubung</h2>
+                    <p class="text-red-600 mt-1">Tidak dapat memuat daftar pengguna dari server.</p>
+                    <p class="text-xs text-slate-500 mt-4 text-left">
+                        <b>Tips:</b><br>
+                        1. Pastikan URL <b>SCRIPT_URL</b> di dalam kode sudah benar.<br>
+                        2. Pastikan Google Apps Script sudah di-deploy ulang dengan akses "Anyone".<br>
+                        3. Periksa koneksi internet Anda dan muat ulang halaman.
+                    </p>
+                </div>
+            `;
+          }
+        };
+
+        const showNotification = (message, isSuccess = true) => {
+            notification.textContent = message;
+            notification.className = notification.className.replace(/bg-(green|red)-500/, isSuccess ? 'bg-green-500' : 'bg-red-500');
+            notification.classList.remove('translate-x-full');
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+            }, 3000);
+        };
+
+        const renderHistory = async (username) => {
+            historyContainer.innerHTML = `<div class="text-center p-8"><i class="fas fa-spinner fa-spin text-2xl text-slate-400"></i><p class="mt-2 text-sm text-slate-500">Memuat riwayat...</p></div>`;
+            recapContainer.innerHTML = '';
+
+            try {
+                const historyUrl = `${SCRIPT_URL}?action=getHistory&user=${username}&t=${new Date().getTime()}`;
+                const response = await fetch(historyUrl, { redirect: 'follow' });
+                const historyData = await response.json();
+
+                if (!response.ok || !Array.isArray(historyData)) {
+                    throw new Error('Data riwayat tidak valid.');
+                }
+                
+                const now = new Date();
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+                let lateCount = 0;
+                let onTimeCount = 0;
+
+                const monthlyCheckIns = historyData.filter(item => {
+                    if (!item.timestamp || typeof item.timestamp !== 'string') return false;
+                    // --- PERBAIKAN: Langsung parse ISO string dari server ---
+                    const recordDate = new Date(item.timestamp); 
+                    if (isNaN(recordDate.getTime())) return false; // Cek jika tanggal valid
+
+                    return item.status === 'Masuk' && recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear;
+                });
+
+                monthlyCheckIns.forEach(item => {
+                    if (item.kehadiran === 'Terlambat') {
+                        lateCount++;
+                    } else if (item.kehadiran === 'Tepat Waktu') {
+                        onTimeCount++;
+                    }
+                });
+                
+                const monthName = now.toLocaleString('id-ID', { month: 'long' });
+                recapContainer.innerHTML = `
+                    <div class="w-full text-center">
+                        <p class="text-xs text-slate-500 mb-2 font-medium">Rekap Bulan ${monthName} ${currentYear}</p>
+                        <div class="flex justify-around items-center">
+                            <div><p class="text-2xl font-bold text-green-600">${onTimeCount}</p><p class="text-sm text-slate-600">Tepat Waktu</p></div>
+                            <div><p class="text-2xl font-bold text-red-600">${lateCount}</p><p class="text-sm text-slate-600">Terlambat</p></div>
+                        </div>
+                    </div>`;
+
+                historyContainer.innerHTML = ''; 
+                if (historyData.length === 0) {
+                    historyContainer.innerHTML = '<p class="text-center text-slate-500 p-8">Belum ada riwayat presensi.</p>';
+                    return;
+                }
+
+                historyData.forEach(item => {
+                    if (!item.timestamp || typeof item.timestamp !== 'string') {
+                        console.warn("Melewatkan riwayat dengan timestamp tidak valid:", item);
+                        return; 
+                    }
+                    
+                    // --- PERBAIKAN: Langsung parse ISO string dari server ---
+                    const recordDate = new Date(item.timestamp);
+                    if (isNaN(recordDate.getTime())) {
+                         console.warn("Melewatkan riwayat dengan format tanggal tidak valid:", item);
+                        return;
+                    }
+                    
+                    const formattedDate = recordDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
+                    const formattedTime = recordDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    
+                    let statusClass = item.status === 'Masuk' ? 'bg-sky-100 text-sky-800' : 'bg-orange-100 text-orange-800';
+                    let statusIcon = item.status === 'Masuk' ? 'fa-sign-in-alt' : 'fa-sign-out-alt';
+                    let lateIndicator = '';
+                    if(item.status === 'Masuk' && item.kehadiran === 'Terlambat') {
+                        lateIndicator = '<span class="ml-2 text-xs font-semibold text-red-600">Terlambat</span>';
+                    }
+                    const photoLink = (item.status === 'Masuk' && item.photoUrl !== '-') 
+                        ? `<a href="${item.photoUrl}" target="_blank" class="text-indigo-600 hover:underline text-sm whitespace-nowrap">Lihat Foto</a>`
+                        : `<span class="text-slate-400 text-sm">Tanpa Foto</span>`;
+
+                    const cardHTML = `
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 flex items-center gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full ${statusClass} flex items-center justify-center"><i class="fas ${statusIcon}"></i></div>
+                            <div class="flex-grow min-w-0"><div class="flex justify-between items-start"><div><p class="font-bold text-slate-800 truncate">${item.status} - Shift ${item.shift} ${lateIndicator}</p><p class="text-sm text-slate-500">${formattedDate}</p></div><p class="text-sm font-semibold text-slate-600 flex-shrink-0 ml-2">${formattedTime}</p></div></div>
+                            <div class="flex-shrink-0">${photoLink}</div>
+                        </div>`;
+                    historyContainer.innerHTML += cardHTML;
+                });
+
+            } catch (error) {
+                console.error("Gagal memuat riwayat:", error);
+                historyContainer.innerHTML = `<p class="text-center text-red-500 p-8">Gagal memuat riwayat. Periksa koneksi dan coba lagi.</p>`;
+            }
+        };
+
+        const showModal = () => { 
+            modal.classList.remove('hidden');
+            setTimeout(() => modalContent.classList.remove('opacity-0', '-translate-y-4'), 10);
+        };
+        const hideModal = () => {
+            modalContent.classList.add('opacity-0', '-translate-y-4');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+
+        // ===== EVENT LISTENERS =====
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = passwordInput.value;
+            if (validUsers[username] && validUsers[username] == password) {
+                currentUser = username;
+                userDisplay.textContent = currentUser;
+                loginPage.classList.add('opacity-0');
+                setTimeout(() => {
+                    loginPage.classList.add('hidden');
+                    appPage.classList.remove('hidden');
+                    appPage.classList.remove('opacity-0');
+                    renderHistory(currentUser);
+                    loginError.classList.add('hidden');
+                }, 500);
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
+        
+        const handleStatusChange = () => {
+            const selectedStatus = document.querySelector('input[name="status"]:checked').value;
+            if (selectedStatus === 'Pulang') {
+                selfieContainer.classList.add('hidden');
+                selfieInput.required = false;
+            } else {
+                selfieContainer.classList.remove('hidden');
+                selfieInput.required = true;
+            }
+        };
+        statusRadios.forEach(radio => radio.addEventListener('change', handleStatusChange));
+
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        presensiForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.querySelector('input[name="status"]:checked').value;
+            const shift = document.getElementById('shift').value;
+            const selfieFile = selfieInput.files[0];
+            
+            // --- TIMESTAMP TETAP MENGGUNAKAN ISO STRING UNTUK KONSISTENSI ---
+            const now = new Date();
+            // Format: D/M/YYYY HH:MM:SS (Hari dulu, sesuai locale Indonesia)
+            // const timestamp = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+            presensiData = {
+                username: currentUser,
+                timestamp: now.toISOString(), // Kirim sebagai ISO string
+                status: status,
+                shift: shift,
+            };
+            if (status === 'Masuk' && selfieFile) {
+                presensiData.fileData = await toBase64(selfieFile);
+                presensiData.fileName = selfieFile.name;
+                presensiData.fileType = selfieFile.type;
+            }
+            showModal();
+        });
+        
+        confirmButton.addEventListener('click', async () => {
+            hideModal();
+            loadingOverlay.classList.remove('hidden'); // Tampilkan loading overlay
+            try {
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(presensiData) });
+                const result = await response.json();
+                if (result.status === "success") {
+                    showNotification('Absensi berhasil dikirim!', true);
+                    presensiForm.reset();
+                    fileNameDisplay.textContent = 'PNG, JPG (MAX. 5MB)';
+                    fileNameDisplay.classList.remove('text-indigo-600', 'font-semibold');
+                    handleStatusChange();
+                    renderHistory(currentUser);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error("Gagal mengirim absensi:", error);
+                showNotification('Gagal mengirim absensi, coba lagi.', false);
+            } finally {
+                loadingOverlay.classList.add('hidden'); // Sembunyikan loading overlay
+            }
+        });
+        
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            const icon = togglePassword.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+
+        logoutButton.addEventListener('click', () => {
+            currentUser = null;
+            appPage.classList.add('opacity-0');
+             setTimeout(() => {
+                appPage.classList.add('hidden');
+                loginPage.classList.remove('hidden');
+                loginPage.classList.remove('opacity-0');
+                loginForm.reset();
+                loginError.classList.add('hidden');
+            }, 500);
+        });
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.dataset.tab;
+                tabButtons.forEach(btn => btn.classList.remove('text-indigo-600', 'border-indigo-600'));
+                button.classList.add('text-indigo-600', 'border-indigo-600');
+                tabContents.forEach(content => content.classList.toggle('hidden', content.id !== `${targetTab}-tab`));
+                if (targetTab === 'riwayat') {
+                    renderHistory(currentUser);
+                }
+            });
+        });
+
+        selfieInput.addEventListener('change', () => {
+            if (selfieInput.files.length > 0) {
+                fileNameDisplay.textContent = selfieInput.files[0].name;
+                fileNameDisplay.classList.add('text-indigo-600', 'font-semibold');
+            } else {
+                fileNameDisplay.textContent = 'PNG, JPG (MAX. 5MB)';
+                fileNameDisplay.classList.remove('text-indigo-600', 'font-semibold');
+            }
+        });
+
+        cancelButton.addEventListener('click', hideModal);
+
+        // Panggil fungsi awal
+        updateTime();
+        setInterval(updateTime, 1000);
+        fetchUsers();
+        handleStatusChange();
+    });
+</script>
+</body>
+</html>
+
